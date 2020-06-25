@@ -14,7 +14,8 @@ namespace Zadatak_1
         public string SongTitle { get; set; }
         public TimeSpan Duration { get; set; }
 
-        
+
+        public delegate void callingDelegate(string message);
         public static Dictionary<int, string> Songs = new Dictionary<int, string>();
         static Random rnd = new Random();
         static string path = "../../Music.txt";
@@ -35,6 +36,8 @@ namespace Zadatak_1
             player.Author = author;
             player.SongTitle = title;
             player.Duration = duration;
+            int key = Songs.Count;
+            Songs.Add(key, player.ToString());
             File.AppendAllText(path, player.ToString() + "\n");
         }
 
@@ -55,7 +58,7 @@ namespace Zadatak_1
                 string[] stringSong = song.Split(' ');
                 string songName = stringSong[1];
                 TimeSpan songDuration = TimeSpan.Parse(stringSong[stringSong.Length - 1]);
-                int intDuration = songDuration.Seconds + songDuration.Minutes*60 + songDuration.Hours * 3600;
+                int intDuration = songDuration.Seconds + songDuration.Minutes * 60 + songDuration.Hours * 3600;
                 Thread t = new Thread(Advertising);
                 do
                 {
@@ -66,7 +69,13 @@ namespace Zadatak_1
                     {
                         t.Start();
                     }
-                    
+
+                    if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                    {
+                        ShowMessage(CallDelegate);
+                        break;
+                    }
+
                 } while (intDuration != 0);
                 t.Abort();
                 Monitor.Pulse(Program.locker);
@@ -75,7 +84,7 @@ namespace Zadatak_1
         }
         internal void SelectSong()
         {
-            
+
             foreach (var item in Songs)
             {
                 Console.WriteLine(item.Key + ". " + item.Value);
@@ -96,8 +105,20 @@ namespace Zadatak_1
             do
             {
                 Thread.Sleep(200);
-                Console.WriteLine(lines[rnd.Next(0,5)]);
+                Console.WriteLine(lines[rnd.Next(0, 5)]);
             } while (true);
+        }
+        public static void CallDelegate(string message)
+        {
+            Console.WriteLine(message);
+        }
+        public static void ShowMessage(callingDelegate cd)
+        {
+            string message = null;
+
+            message = "The song is stopped";
+            cd(message);
+
         }
         public static void ReadSongsFromTheFile()
         {

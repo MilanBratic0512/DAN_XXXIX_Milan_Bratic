@@ -18,6 +18,7 @@ namespace Zadatak_1
             string option = null;
             do
             {
+                
                 Console.WriteLine("1. Add new song");
                 Console.WriteLine("2. Show all");
                 Console.WriteLine("3. Play the song");
